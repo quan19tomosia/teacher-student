@@ -5,13 +5,13 @@
   </head>
   <body>
     <p>
-      Hello, I'm <strong><%= @sender.name %></strong>, your student
+      Hello, I'm <strong><%= @sender.name %></strong>
     </p>
     <p>
       <%= @message %>
     </p>
     <p>
-      Thank you for everything!
+      This is email from <%= @sender.name %> to <%= @receiver.name %>
     </p>
   </body>
 </html>
