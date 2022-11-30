@@ -1,0 +1,18 @@
+
+<h3>Course <strong style="color: blue"><%= @course.name %></strong></h3>
+<h4>Teacher:</h4>
+<% if @tchrs.any? %>
+  <%= @tchrs.each do |tchr| %>
+    <%= tchr.name %>
+  <% end %>
+<% else %>
+  <p>No teacher in this course yet</p>
+<% end %>
+<h4>Students:</h4>
+<% if @students.any? %>
+  <%= @students.each do |student| %>
+    <p><%= student.name %></p>
+  <% end %>
+<% else %>
+  <p>No student in this course yet</p>
+<% end %>

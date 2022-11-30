@@ -1,0 +1,48 @@
+<h1>Home Page</h1>
+
+<% if current_user %>
+  <div style="display: flex; justify-content: space-between">
+    <p>Hello, <strong><%= current_user.email.split("@").first.downcase %></strong></p>
+    <%= link_to "Sign out", destroy_user_session_path, data: {turbo_method: :delete} %>
+  </div>
+  <% if current_user.role_admin? %>
+    <p>Hello I'm admin <strong><%= current_user.name %></strong></p>
+    <p ><strong>Courses</strong>: 
+      <div style="display: flex;">
+        <% @courses.each do |course| %>
+          <p style="margin: 0 10px"><%= link_to course.name, course_path(course), style: "text-decoration: none" %></p>
+        <% end %>
+      </div>
+    </p>
+    <%= form_with url: "/add_user_to_course", method: :get do |f| %>
+      <%= f.select(:course_id, options_for_select(@courses.collect { |course| [ course.name, course.id ] })) %>
+      <%= f.select(:user_id, options_for_select(@users.collect { |u| [ u.name, u.id ] })) %>
+      <%= f.submit "Add user to course" %>
+    <% end %>
+  <% end %>
+  <% if current_user.role_teacher? %>
+    <% if @user_courses.any? %>
+      <%= form_with url: "/send_to_all_students", method: :get do |f| %>
+        <%= f.label "Message" %>
+        <%= f.text_area :message, style: "width: 100%; line-height: 40px"%>
+        <%= f.select(:course_id, options_for_select(@user_courses.collect { |uc| [ uc.name, uc.id ]})) %>
+        <%= f.submit "Send to all students in my class" %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <% if current_user.role_student? %>
+    <% if @user_courses.any? %>
+      <%= form_with url: "/student_send_email_to_teacher", method: :get do |f| %>
+        <%= f.label "Message" %>
+        <%= f.text_area :message, style: "width: 100%; line-height: 40px" %>
+          <%= f.select(:course_id, options_for_select(@user_courses.collect { |uc| [uc.name, uc.id] })) %>
+          <%# <%= f.select(:teacher, options_for_select(@teachers.collect {|teacher| [ teacher.name, teacher.id ]})) %> 
+          <%= f.submit "Send email to my teacher" %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% else %>
+  <p>You are not signed in.</p>
+  <%= link_to "Login", new_user_session_path %>
+  <%= link_to "Sign up here!", new_user_registration_path %>
+<% end %>
